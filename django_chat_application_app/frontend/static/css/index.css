@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .chatroom{
+        width: 95vw;
+        height: 95vh;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .show-dropdown{
+      width: 9rem;
+      height: 9rem;
+      animation-name: dropdown-in;
+      animation-duration: 0.5s;
+    }
+    .hide-dropdown{
+      width: 0px;
+      height: 0px;
+      animation-name: dropdown-out;
+      animation-duration: 1.5s;
+    }
+    .show-contact{
+      width: 100%;
+      animation-name: slide-in;
+      animation-duration: 1.5s;
+    }
+
+    .hide-contact{
+      width: 0%;
+      animation-name: slide-out;
+      animation-duration: 1.5s;
+    }
+
+    @keyframes dropdown-in {
+      0%{
+        width: 0%;
+        height: 0%;
+      }
+      100%{
+        width: 9rem;
+        height: 9rem;
+
+      }
+    }
+
+    @keyframes dropdown-out {
+      0%{
+        width: 9rem;
+        height: 9rem;
+      }
+      100%{
+        width: 0px;
+        height: 0px;
+
+      }
+    }
+
+    @keyframes slide-in {
+      0%{
+        width: 0%;
+      }
+      100%{
+        width: 100%;
+
+      }
+    }
+
+    @keyframes slide-out {
+      0%{
+        width: 100%;
+      }
+      100%{
+        width: 0%;
+        display: none;
+
+      }
+    }
+  }
+  @layer utilities {
+
+    .w-90p{
+      width: 90%;
+    }
+    .w-10p{
+      width: 10%;
+    }
+  }
