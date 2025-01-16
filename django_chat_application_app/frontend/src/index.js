@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {createRoot} from "react-dom/client"
 import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router';
@@ -9,33 +9,34 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Chat from './components/Chat';
 
+
+import GlobalProvider from './store';
+import { GlobalContext } from './store';
+
 const root = createRoot(document.getElementById('root'));
-
-const isAuthenticated = true;
-
-
-
 const router = createBrowserRouter([
   {
     path: "/",
     element:<App/>,
   },
   {
-    path:"login/",
+    path:"login-site/",
     element:<Login/>,
   },
   {
-    path:"register/",
+    path:"register-site/",
     element:<Register/>,
   },
   {
     path:"chat/",
-    element:isAuthenticated ?(<Chat/>):(<p>This is a protected route</p>),
+    element:<Chat/>,
   }
 ])
 
 
 root.render(
+  <GlobalProvider>
     <RouterProvider router={router}/>
+  </GlobalProvider>
 );
 

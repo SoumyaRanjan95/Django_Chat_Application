@@ -5,10 +5,10 @@ function App() {
 
   const navigate = useNavigate();
   function handleLogin(){
-    navigate('/login/');
+    navigate('/login-site/');
   }
   function handleRegister(){
-    navigate('/register/');
+    navigate('/register-site/');
   }
 
   return (

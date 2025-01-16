@@ -1,26 +1,31 @@
-import React,{useState} from "react";
+import React,{useState,useContext} from "react";
 import { Link } from "react-router";
+
+import { register } from "../store/action/action";
+import { GlobalContext } from "../store";
+
 function Register(){
 
+    const {registerState, registerDispatch} = useContext(GlobalContext);
     
-        const [signUpData, setSignUpData] = useState({mobile:"", fullname:"",password:""})
+        const [signUpData, setSignUpData] = useState({mobile:"", name:"",password:""})
         const [passwd2, setPasswd2] = useState("")
 
     
         const handleChange = (e) => {
             const { name, value } = e.target;
-    
             setSignUpData({...signUpData,[name]: value})
         }
     
-        const handleSubmit = (e) => {
+        async function handleSubmit(e) {
             e.preventDefault();
     
             if(passwd2 == signUpData.password){
-    
+                const registerAction = register(registerDispatch)
+                await registerAction(signUpData)
             }else{
             }
-            setSignUpData({mobile:"", fullname:"",password:""})
+            setSignUpData({mobile:"", name:"",password:""})
             setPasswd2("")            
     
         }
@@ -37,13 +42,13 @@ function Register(){
                         <h5 className="p-2">Register</h5>
                         <form className="p-2 w-full flex flex-col justify-center items-center" onSubmit={handleSubmit}>
                             <input className="py-2 my-1 w-full indent-2" type="text" name="mobile" value={signUpData.mobile} onChange={handleChange} placeholder="Enter you Mobile Number" required></input>
-                            <input className="py-2 my-1 w-full indent-2" type="text" name="fullname" value={signUpData.fullname} onChange={handleChange} placeholder="Enter you Name" required></input>
+                            <input className="py-2 my-1 w-full indent-2" type="text" name="name" value={signUpData.name} onChange={handleChange} placeholder="Enter you Name" required></input>
                             <input className="py-2 my-1 w-full indent-2" type="password" name="password" value={signUpData.password} onChange={handleChange} placeholder="Enter Password" required></input>
                             <input className="py-2 my-1 w-full indent-2" type="password" name="passwd2" value={passwd2} onChange={(e) => setPasswd2(e.target.value)} placeholder="Re-Enter Password" required></input>
                             <input className="py-2 my-1 w-full bg-indigo-300 rounded-md font-bold" type="submit" value="Register"/>
                         </form>
                     <div className="p-2">
-                        <p className="">Don't have an Account <Link className="text-rose-600 font-bold" to={'/login/'}>Login</Link></p>
+                        <p className="">Don't have an Account <Link className="text-rose-600 font-bold" to={'/login-site/'}>Login</Link></p>
                     </div>
                     </div>
                 </div>

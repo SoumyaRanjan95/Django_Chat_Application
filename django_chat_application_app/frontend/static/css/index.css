@@ -4,6 +4,8 @@
 
 
 @layer components {
+
+
     .chatroom{
         width: 95vw;
         height: 95vh;
@@ -36,6 +38,23 @@
       animation-duration: 1.5s;
     }
 
+    .scroller{
+      overflow-anchor: none;
+    }
+
+    .anchor {
+      overflow-anchor: auto;
+      height: 1px;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
     @keyframes dropdown-in {
       0%{
         width: 0%;
@@ -81,12 +100,5 @@
       }
     }
   }
-  @layer utilities {
 
-    .w-90p{
-      width: 90%;
-    }
-    .w-10p{
-      width: 10%;
-    }
-  }
+

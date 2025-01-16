@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'chat_api',
     'django_chat_application_app',
 
 ]
@@ -76,6 +78,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'django_chat_application.wsgi.application'
 ASGI_APPLICATION = "django_chat_application.asgi.application"
 
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+AUTH_USER_MODEL = "chat_api.ChatUser"
+AUTHENTICATION_BACKENDS =["django.contrib.auth.backends.ModelBackend"]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        ],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated',],
+}
+
+#SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+
+
+#CSRF_HEADER_NAME = 'X-CSRFToken'
+#CSRF_USE_SESSIONS = True
+#CSRF_COOKIE_HTTPONLY = True
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
