@@ -5,6 +5,15 @@
 
 @layer components {
 
+    .customized-input{
+      background-color: #1e293b;
+      color: #f8fafc;
+    }
+
+    .customized-scrollbar{
+      scrollbar-width: thin;
+      scrollbar-color:black #0f172a;
+    }
 
     .chatroom{
         width: 95vw;
@@ -24,18 +33,18 @@
       width: 0px;
       height: 0px;
       animation-name: dropdown-out;
-      animation-duration: 1.5s;
+      animation-duration: 0.5s;
     }
     .show-contact{
       width: 100%;
       animation-name: slide-in;
-      animation-duration: 1.5s;
+      animation-duration: 0.5s;
     }
 
     .hide-contact{
       width: 0%;
       animation-name: slide-out;
-      animation-duration: 1.5s;
+      animation-duration: 0.5s;
     }
 
     .scroller{

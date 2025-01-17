@@ -42,7 +42,7 @@ function Login(){
 
     return (
         <>
-        <div className="p -6 w-screen h-screen flex flex-col justify-center items-center backdrop-blur-sm rounded-md">
+        <div className="p -6 w-screen h-screen flex flex-col justify-center items-center rounded-md">
             <Link className="p-3 bg-white text-base font-bold text-indigo-600 rounded-md mx-3 hover:text-indigo-800 hover:bg-slate-200 transition-all absolute top-0 left-0" to={'/'}>Home</Link>
             <div className="p-6 w-2/5 flex flex-col justify-center items-start bg-slate-100">
                 <h5 className="p-2">Login</h5>

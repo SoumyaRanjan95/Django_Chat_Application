@@ -26,7 +26,7 @@ function Chat(){
 
     const ws = useRef(null);
 
-
+    
     useEffect(() => {
 
         const socket = new WebSocket(
@@ -71,28 +71,29 @@ function Chat(){
           socket.close()
         }
     },[])
+    
 
     function AuthenticatedChatRoom({ref}){
 
 
         return (<>
 
-        <div className="w-screen h-screen flex flex-col items-center justify-center bg-rose-200 relative">
-            <div className="chatroom flex flex-row justify-start items-center bg-indigo-300 rounded-md">
+        <div className="w-screen h-screen flex flex-col items-center justify-center bg-black relative">
+            <div className="chatroom flex flex-row justify-start items-center rounded-md">
                 <div className="h-full">
                     <SideBar/>
                 </div>
-                <div className="w-1/3 h-full bg-rose-100 flex flex-col relative">
+                <div className="w-1/3 h-full bg-slate-900 flex flex-col relative">
                         <MessageBox showContacts={showContacts} setShowContacts={setShowContacts}/>
                         <ShowContacts ws={ws} showContacts={showContacts} setShowContacts={setShowContacts}/>
                 </div>
                 {msgViewState.show?(<>
-                    <div className="w-2/3 h-full bg-green-100 flex flex-col justify-end">
+                    <div className="w-2/3 h-full bg-gray-800 flex flex-col justify-end">
                         <MessageView ws={ws}/>
                     </div>
                 </>):(<>
-                    <div className="w-2/3 h-full bg-green-100 flex flex-col justify-center items-center">
-                        <p>Your Messages Will Appera Here</p>
+                    <div className="w-2/3 h-full bg-gray-800 text-slate-50 flex flex-col justify-center items-center">
+                        <p>Your Messages Will Appear Here</p>
                     </div>
                 </>)}
 

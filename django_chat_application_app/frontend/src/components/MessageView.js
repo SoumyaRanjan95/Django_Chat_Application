@@ -14,7 +14,7 @@ function MessageView({ws}){
 
         return(
             <>
-            <div className={`w-full ${chatState.user == elem.from_user_id?'justify-start':'justify-end'} flex`}>
+            <div className={`w-full ${chatState.mobile == elem.from_user?'justify-end':'justify-start'} flex`}>
                 <div className={`my-2 w-1/3 p-2 flex flex-col justify-start bg-indigo-100 rounded-md`}>
                     <div className="p-1 w-full bg-indigo-200">
                         <p className="text-sm">{elem.content}</p>
