@@ -41,42 +41,50 @@ export function chatReducer(state, action){
       return {
         ...state,loading: true
       }
-      case 'CHAT_LOADING_SUCCESS':
-        console.log("From reducer chat loaded successfully")
-        return {
-          ...state,
-          id: action.payload.id,
-          user: action.payload.user,
-          name:action.payload.name,
-          mobile: action.payload.mobile,
-          user_group_name: action.payload.user_group_name,
-          contacts:action.payload.contacts,
-          loading: false,
-          error: false,
-      }
-      case 'UPDATE_GROUP_MESSAGE_ON_RECEIVE':
+    case 'ADD_CONTACT_TO_CHAT_STATE':
+      return {
+        ...state,
+        contacts: [...state.contacts, action.payload],
 
-        let filteredOut = [...state.contacts.filter((elem) =>elem.group_name != action.payload.group_name)]
-        let top = [...state.contacts.filter((elem) =>elem.group_name == action.payload.group_name)][0]
-        top.messages.push(action.payload)
-
-        console.log("New array from reducer : ", [top, ...filteredOut])
-        return {
-          ...state,
-          contacts:[top, ...filteredOut],
-        }
-      case 'CHAT_LOADING_ERROR':
-        return {
-          ...state,
-          id: null,
-          user: null,
-          name: null,
-          mobile: null,
-          user_group_name: null,
-          contacts:[],
-          loading: false,
-          error: false,
       }
+
+    case 'CHAT_LOADING_SUCCESS':
+      console.log("From reducer chat loaded successfully")
+      return {
+        ...state,
+        id: action.payload.id,
+        user: action.payload.user,
+        name:action.payload.name,
+        mobile: action.payload.mobile,
+        user_group_name: action.payload.user_group_name,
+        contacts:action.payload.contacts,
+        loading: false,
+        error: false,
+    }
+    case 'UPDATE_GROUP_MESSAGE_ON_RECEIVE':
+
+      let filteredOut = [...state.contacts.filter((elem) =>elem.group_name != action.payload.group_name)]
+      let top = [...state.contacts.filter((elem) =>elem.group_name == action.payload.group_name)][0]
+      top.messages.push(action.payload)
+      top.last_message_time = action.payload.timestamp
+
+      console.log("New array from reducer : ", [top, ...filteredOut])
+      return {
+        ...state,
+        contacts:[top, ...filteredOut],
+      }
+    case 'CHAT_LOADING_ERROR':
+      return {
+        ...state,
+        id: null,
+        user: null,
+        name: null,
+        mobile: null,
+        user_group_name: null,
+        contacts:[],
+        loading: false,
+        error: false,
+    }
   }
 }
 

@@ -44,6 +44,8 @@ function MessageBox({showContacts,setShowContacts}){
         msgViewDispatch({type:'LOAD_CONTENT',payload: elem})
     }
 
+
+
     async function handleLogout(){
         // Handle Logout logic
         const logoutAction = logout(authDispatch)
@@ -55,7 +57,7 @@ function MessageBox({showContacts,setShowContacts}){
             authDispatch({type:'LOGOUT'})
             chatDispatch({type:'CHAT_LOADING_ERROR'})
             userContactsDispatch({type:'USERCONTACTS_ERROR'})
-            navigate('/login-site/')
+            window.location.replace(`${process.env.APP_URL}/login/`)
 
         })
         .catch((error) => {
@@ -63,20 +65,13 @@ function MessageBox({showContacts,setShowContacts}){
         })
     }
 
-
     function ShowMoreDropDown(){
-
-
-
-    
-
 
         return(<>
             {showDropDown?(<>
                 <div className="show-dropdown flex flex-col justify-evenly items-start bg-slate-800 text-slate-50 absolute top-8 right-4 z-10 rounded-sm overflow-hidden cursor-pointer">
                     <p onClick={handleLogout} className="w-full p-1 px-3 text-left text-sm cursor-pointer">Log Out</p>
-                    <p className="w-full p-1 px-3 text-left text-sm cursor-pointer">Some Option</p>
-                    <p className="w-full p-1 px-3 text-left text-sm cursor-pointer">Other Option</p>
+                    <p onClick={''} className="w-full p-1 px-3 text-left text-sm cursor-pointer">Lock Screen</p>
                 </div>
             </>):(<>
 
@@ -87,21 +82,30 @@ function MessageBox({showContacts,setShowContacts}){
 
     function MessageStackItem({elem}){
 
+        function inUsersContacts(elem,mobile){
+            const user_contact_name = userContactsState.user_contacts.filter((elem) => elem.contact_mobile == mobile)[0]//['contact_name']
+            if (user_contact_name == null){
+                return [false, user_contact_name]
+            }{
+                return [true,user_contact_name['contact_name']]
+            }
+        }
+
         const img = false
         const mobile = elem.group_users.filter((elem) => elem.mobile != chatState.mobile)[0]['mobile']
-        const user_contact_name = userContactsState.user_contacts.filter((elem) => elem.contact_mobile == mobile)[0]['contact_name']
+        let [contact_exists,user_contact_name] = inUsersContacts(elem,mobile)
         const messages = elem.messages
         return (
             <>
-            <div className="p-2 w-full flex flex-row justify-start items-center  border-b-2 border-black" onClick={() => handleShowMessageView(elem)}>
+            <div className="p-2 my-1 w-full flex flex-row justify-start items-center" onClick={() => handleShowMessageView(elem)}>
                 {img?(<><img className="" src=""/></>):(<i className="material-icons text-slate-100 bg-slate-300 rounded-full text-5xl">account_circle</i>)}
-                <div className="mx-2 w-full flex flex-col justify-start items-start rounded-sm cursor-pointer">
-                    <p className="text-rose-600 font-bold">{user_contact_name}</p>
-                    <p className="text-indigo-600 text-sm">{messages.length > 0 ?messages.slice(-1)[0].content:<></>}</p>
+                <div className="mx-5 w-full flex flex-col justify-start items-start rounded-sm cursor-pointer">
+                    <p className="text-white font-bold">{contact_exists?user_contact_name:mobile}</p>
+                    <p className="text-slate-200 text-sm">{messages.length > 0 ?messages.slice(-1)[0].content:<></>}</p>
                 </div>
                 <div className="h-full m-1 flex flex-col justify-center items-start">
-                    <p className="text-xs">{messages.length > 0 ?messages.slice(-1)[0].timestamp:<></>}</p>
-                    <p className="text-xs">10:34pm</p>
+                    <p className="text-xs text-slate-200">{messages.length > 0 ?new Date(messages.slice(-1)[0].timestamp).toISOString().substring(0,10):<></>}</p>
+                    <p className="text-xs text-slate-200">{messages.length > 0 ?new Date(messages.slice(-1)[0].timestamp).toISOString().substring(11,16):<></>}</p>
                 </div>
             </div>
             </>
@@ -111,10 +115,43 @@ function MessageBox({showContacts,setShowContacts}){
     function MessageStack(){
         let msgItems = [];
 
+        function partition(arr, low, high){
+            let pivot = arr[high]
+            let i = low - 1
+        
+            for(let j=low;j<high;j++){
+                if(arr[j].last_message_time > pivot.last_message_time){
+                    i = i + 1
+                    let temp = arr[i]
+                    arr[i] = arr[j]
+                    arr[j] = temp
+                }
+            }
+            i = i + 1
+            let temp = arr[i]
+            arr[i] = pivot
+            arr[high]=temp
+        
+            return i
+        }
+        
+        function quick_sort(arr, low, high){
+            if(low<high){
+                let pidx = partition(arr,low,high)
+                quick_sort(arr,low,pidx-1)
+                quick_sort(arr,pidx+1,high)
+            }
+        }
+
         if (chatState.contacts.length != 0){
             if(userContactsState.user_contacts.length !=0){
+                quick_sort(chatState.contacts,0, chatState.contacts.length - 1)
                 msgItems = chatState.contacts.map((elem, index) => {
-                    return <MessageStackItem key={index} elem={elem}/>
+                    if (elem.messages.length !=0){
+                        return <MessageStackItem key={index} elem={elem}/>
+                    }else{
+                        return
+                    }
                 })
             }
     

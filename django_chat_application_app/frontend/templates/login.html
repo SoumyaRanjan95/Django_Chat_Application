@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css'%}">
+
+
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="p-6 w-screen h-screen flex flex-col justify-center items-center rounded-md">
+        <a class="p-3 bg-white text-base font-bold text-indigo-600 rounded-md mx-3 hover:text-indigo-800 hover:bg-slate-200 transition-all absolute top-0 left-0" href='/'>Home</a>
+
+        <div class="p-6 w-2/5 flex flex-col justify-center items-start bg-slate-100">
+              {% if error %}
+              <div class="border-2 border-slate-400 w-full p-3 rounded-md">
+                <p class="text-red-600 font-bold">{{error_message}}</p>
+              </div>
+              {% endif%}
+            <h5 class="p-2 font-bold text-xl">Login</h5>
+            <p class="p-2 font-bold">Mobile Number</p>
+
+            <form class="p-2 w-full flex flex-col justify-center items-center" method="post" action="/login/" >
+                {% csrf_token %}
+                <input class="py-2 my-1 w-full indent-2" type="text" name="mobile" placeholder="Enter you Number" required/>
+                <input class="py-2 my-1 w-full indent-2" type="password" name="password" placeholder="Enter Password" required/>
+                <input class="py-2 my-1 w-full indent-2 bg-indigo-300 rounded-md font-bold" type="submit" value="Submit"/>
+            </form>
+        <div class="p-2">
+            <p>Don't have an Account <a class="text-rose-600 font-bold"  href='/register/'>Sign Up</a></p>
+        </div>
+        </div>
+    </div>
+  </body>
+</html>

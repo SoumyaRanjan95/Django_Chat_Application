@@ -16,20 +16,8 @@ import { GlobalContext } from './store';
 const root = createRoot(document.getElementById('root'));
 const router = createBrowserRouter([
   {
-    path: "/",
-    element:<App/>,
-  },
-  {
-    path:"login-site/",
-    element:<Login/>,
-  },
-  {
-    path:"register-site/",
-    element:<Register/>,
-  },
-  {
     path:"chat/",
-    element:<Chat/>,
+    element:<App/>,
   }
 ])
 

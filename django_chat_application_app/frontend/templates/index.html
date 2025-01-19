@@ -9,10 +9,20 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/index.css'%}">
 
 
-    <title>Chat Application</title>
+    <title>Django Chat Application</title>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
+    <section class="w-screen h-screen flex flex-col justify-center bg-green-900">
+      <nav class="w-full p-3 flex flex-row justify-end">
+        <a class="p-3 bg-green-800 text-base font-bold text-slate-100 rounded-md mx-3 hover:text-green-700 hover:bg-slate-200 transition-all" href='/login/'>Login</a>
+        <a class='p-3 bg-green-800 text-base font-bold text-slate-100 rounded-md mx-3 hover:text-green-700 hover:bg-slate-200 transition-all' href='/register/'>Register</a>
+      </nav>
+      <div class="w-full h-4/5 text-5xl text-slate-50 bg-green-900  flex flex-row justify-center items-center">
+        <p> Django Chat Application</p>
+      </div>
+      <footer class="w-full h-1/5 text-sm text-slate-50 bg-green-900 py-2 flex flex-row justify-center items-end">
+        <p>Made with React, Django and Love <span class="text-xl animate-pulse">&#x1F496;</span></p>
+      </footer>
+  </section>
   </body>
 </html>

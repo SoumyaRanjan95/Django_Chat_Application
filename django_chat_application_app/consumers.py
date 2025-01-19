@@ -28,6 +28,16 @@ def add_group_to_contacts(model_instance, group_instance):
     model_instance.save()
     return model_instance
 
+def update_last_message_time(model_instance,time):
+    model_instance.last_message_time = time
+    model_instance.save()
+
+def get_chat_groups_to_serialize(user1,user2):
+    chat_group = ChatGroups.objects.filter(group_users__mobile=user1.mobile).filter(group_users__mobile=user2.mobile)[0]
+    return chat_group
+
+def save_message(msg):
+    msg.save()
 
 
 class ChatConsumer(AsyncWebsocketConsumer): # USE THIS INSTED OF ABOVE ONE
@@ -46,7 +56,6 @@ class ChatConsumer(AsyncWebsocketConsumer): # USE THIS INSTED OF ABOVE ONE
         contact_serializer = await database_sync_to_async(ContactsSerializer)(user)
         contacts = await database_sync_to_async(get_data)(contact_serializer)
         user_contacts_objects = await database_sync_to_async(list)(UsersContacts.objects.filter(user=user.id))
-        print(user_contacts_objects)
 
         user_contact_serializer = await database_sync_to_async(UsersContactsSerializer)(user_contacts_objects, many=True)
         user_contacts = await database_sync_to_async(get_data)(user_contact_serializer)
@@ -89,14 +98,13 @@ class ChatConsumer(AsyncWebsocketConsumer): # USE THIS INSTED OF ABOVE ONE
 
         text_data_json = json.loads(text_data)
         group_name = text_data_json['group_name']
-        print(text_data_json)
         # Send message to room group
+        
         await self.channel_layer.group_send(
             group_name, text_data_json
         )
     async def chat_add_contact(self,event):
         data = event['data']
-        print(data)
         msg = {}
         user_exists = await database_sync_to_async(list)(ChatUser.objects.filter(mobile = data['mobile']))
         if len(user_exists) != 0:
@@ -126,14 +134,47 @@ class ChatConsumer(AsyncWebsocketConsumer): # USE THIS INSTED OF ABOVE ONE
                     user_contacts_object = await UsersContacts.objects.aget(user=self.scope['user'],contact_id=get_contact)
                     user_contact_serializer = await database_sync_to_async(UsersContactsSerializer)(user_contacts_object)
                     user_contacts = await database_sync_to_async(get_data)(user_contact_serializer)
+
+
+                    # change from here
+                    to_group_serializers =  await database_sync_to_async(get_chat_groups_to_serialize)(self.scope['user'],get_contact)
+                    group_serializers = await database_sync_to_async(GroupSerializers)(to_group_serializers)
+                    to_chat_state = await database_sync_to_async(get_data)(group_serializers)
+
+
+                    await self.channel_layer.group_add(to_chat_state['group_name'], self.channel_name)
+
+                    data = {
+                        'to_chat_state': to_chat_state,
+                        'user_contacts':user_contacts
+                    }
+
                     msg['type']= 'CONTACTS_ADDED'
-                    msg['data']= user_contacts
+                    msg['data']= data
                 else:
+                    #new_contact_model_instance = await Contacts.objects.aget(user=get_contact)
+                    #await database_sync_to_async(add_group_to_contacts)(new_contact_model_instance,any_group_exists[0])
+                
                     user_contacts_object = await UsersContacts.objects.aget(user=self.scope['user'],contact_id=get_contact)
                     user_contact_serializer = await database_sync_to_async(UsersContactsSerializer)(user_contacts_object)
                     user_contacts = await database_sync_to_async(get_data)(user_contact_serializer)
+
+                    # change from here
+
+                    to_group_serializers =  await database_sync_to_async(get_chat_groups_to_serialize)(self.scope['user'],get_contact)
+                    group_serializers = await database_sync_to_async(GroupSerializers)(to_group_serializers)
+                    to_chat_state = await database_sync_to_async(get_data)(group_serializers)
+
+
+                    await self.channel_layer.group_add(to_chat_state['group_name'], self.channel_name)
+
+                    data = {
+                        'to_chat_state': to_chat_state,
+                        'user_contacts':user_contacts
+                    }
+
                     msg['type']= 'CONTACTS_ADDED'
-                    msg['data']= user_contacts
+                    msg['data']= data
             else:
                 msg['type']= 'FAILED_ADDING_CONTACTS'
                 msg['data']= "Contact Already Exists" 
@@ -147,13 +188,40 @@ class ChatConsumer(AsyncWebsocketConsumer): # USE THIS INSTED OF ABOVE ONE
     # Receive message from room group
     async def chat_message(self, event):
         data = event["data"]
+
         print(data)
 
+        to = await ChatUser.objects.aget(mobile=data['to'])
+        from_user = await ChatUser.objects.aget(mobile = data['from_user'])
+        group_name = await ChatGroups.objects.aget(group_name=data['group_name'])
+        content = data['content']
+        timestamp = data['timestamp']
+
+        await database_sync_to_async(update_last_message_time)(group_name,timestamp)
+
+
+        data = {
+            'to' : to,
+            'from_user':from_user,
+            'group_name':group_name,
+            'content':content,
+            'timestamp':timestamp,
+        }
+
+
+
         # Add message to the Model
-        Messages.objects.acreate(**data)
+        msg = await Messages.objects.acreate(**data)
+        await database_sync_to_async(save_message)(msg)
+        #await Messages.objects.acreate(to=to, from_user=from_user, group_name=group_name,content=content,timestamp=timestamp)
+        data['to']=data['to'].mobile
+        data['from_user']=data['from_user'].mobile
+        data['group_name']=data['group_name'].group_name
 
         msg = {}
         msg['type']= 'MESSAGE_RECEIVED'
         msg['data']= data
+
+        print(msg)
         # Send message to WebSocket
         await self.send(text_data=json.dumps(msg,cls=DjangoJSONEncoder))

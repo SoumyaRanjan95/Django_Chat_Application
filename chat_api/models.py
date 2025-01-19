@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+import datetime
 
 import uuid
 
@@ -26,7 +27,7 @@ class ChatUser(AbstractUser):
 class ChatGroups(models.Model):
     group_name = models.UUIDField(unique=True,auto_created=True,editable=False, default=uuid.uuid4)
     group_users = models.ManyToManyField(ChatUser,related_name='group_users')
-
+    last_message_time = models.DateTimeField(default=datetime.datetime.now().isoformat())
 
 class Contacts(models.Model):
     user = models.OneToOneField(ChatUser, on_delete=models.CASCADE, related_name='user')
@@ -45,6 +46,8 @@ class Messages(models.Model):
     group_name = models.ForeignKey(ChatGroups, on_delete=models.CASCADE, related_name='receiver_sender_group')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    #delivered = models.BooleanField(default=False)
+    #seen = models.BooleanField(default=False)
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_contacts(sender, instance=None, created=False, **kwargs):

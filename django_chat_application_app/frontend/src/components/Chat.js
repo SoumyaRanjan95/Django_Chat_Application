@@ -40,9 +40,7 @@ function Chat(){
         socket.onopen = () => setIsReady(true)
         socket.onclose = () => setIsReady(false)
         socket.onmessage = function(event){
-            console.log(event)
             const Event = JSON.parse(event.data)
-            console.log("From Chat.js useEffect : ",Event)
             switch(Event.type){
                 case 'CHAT_LOADED':
                     chatDispatch({type:"CHAT_LOADING_SUCCESS",payload:Event.data.contacts})
@@ -51,10 +49,11 @@ function Chat(){
                 case 'CONTACTS_ADDED':
                     alert('Contacts added successfully')
                     console.log(Event.data)
-                    userContactsDispatch({type: 'USERCONTACTS_ADDED', payload: Event.data})
+                    chatDispatch({type:"ADD_CONTACT_TO_CHAT_STATE", payload: Event.data.to_chat_state})
+                    userContactsDispatch({type: 'USERCONTACTS_ADDED', payload: Event.data.user_contacts})
                     break;
                 case 'FAILED_ADDING_CONTACTS':
-                    console.log('Failed Adding Contact')
+                    alert('Failed Adding Contact')
                     break
                 case 'MESSAGE_RECEIVED':
                     console.log("Message Delivered",Event.data)
@@ -107,7 +106,7 @@ function Chat(){
 
     return (
         <>
-            {authState.mobile?(<AuthenticatedChatRoom ref={ws}/>):(<p>404 Not Found</p>)}
+            {chatState.mobile?(<AuthenticatedChatRoom ref={ws}/>):(<p>404 Not Found</p>)}
         </>
     )
 

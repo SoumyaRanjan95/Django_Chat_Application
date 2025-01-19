@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css'%}">
+
+
+    <title>Register</title>
+  </head>
+  <body>
+    <div class="p -6 w-screen h-screen flex flex-col justify-center items-center backdrop-blur-sm rounded-md">
+        <a class="p-3 bg-white text-base font-bold text-indigo-600 rounded-md mx-3 hover:text-indigo-800 hover:bg-slate-200 transition-all absolute top-0 left-0" href='/'>Home</a>
+    
+        <div class="p-6 w-2/5 flex flex-col justify-center items-start bg-slate-100">
+          <div id="message-box" class="w-full">
+            {% if error %}
+            <div class="border-2 border-slate-400 w-full p-3 rounded-md">
+              <p class="text-red-600 font-bold">{{error_message}}</p>
+            </div>
+            {% endif%}
+            {% if message %}
+            <div class="border-2 border-slate-400 w-full p-3 rounded-md">
+              <p class="text-green-600 font-bold">{{message_content}}</p>
+            </div>
+            {% endif%}
+          </div>
+
+            <h5 class="p-2 text-xl font-bold">Register</h5>
+            <form class="p-2 w-full flex flex-col justify-center items-center" method="post" action="/register/">
+                {% csrf_token %}
+                <input id="mobile" class="py-2 my-1 w-full indent-2 outline-none" type="text" name="mobile" placeholder="Enter you Mobile Number" required></input>
+                <input class="py-2 my-1 w-full indent-2 outline-none" type="text" name="name" placeholder="Enter you Name" required></input>
+                <input id="password" class="py-2 my-1 w-full indent-2 outline-none" type="password" name="password" placeholder="Enter Password" required></input>
+                <input id="password2" class="py-2 my-1 w-full indent-2 outline-none" type="password" name="password2" placeholder="Re-Enter Password" required></input>
+                <input id="submit" disabled class="py-2 my-1 w-full bg-indigo-100 text-slate-100 rounded-md font-bold" type="submit" value="Register"/>
+            </form>
+        <div class="p-2">
+            <p>Don't have an Account <a class="text-rose-600 font-bold" href='/login/'>Login</a></p>
+        </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="{% static 'js/register.js'%}"></script>
+  </body>
+</html>

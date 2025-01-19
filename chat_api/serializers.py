@@ -38,12 +38,32 @@ class ChatUserSerializer(serializers.ModelSerializer):
         fields = ['id','mobile']
     
 
+class MessagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Messages
+        fields = '__all__'
+
+
+    def to_representation(self,instance): 
+        representation = super().to_representation(instance)
+        representation['from_user'] = ChatUser.objects.get(id=representation['from_user']).mobile
+        representation['to'] = ChatUser.objects.get(id=representation['to']).mobile
+
+        return representation
+    
 class GroupSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = ChatGroups
-        fields = ['id','group_name']
+        fields = '__all__'
 
+    def to_representation(self,instance): 
+        representation = super().to_representation(instance)
+        group_users = list(instance.group_users.all().values('id','mobile'))
+        msg_list = MessagesSerializer(Messages.objects.filter(group_name=instance.id),many=True).data
+        representation["group_users"] = group_users
+        representation['messages'] = msg_list
+        return representation
     
 
 class ContactsSerializer(serializers.ModelSerializer):
@@ -61,8 +81,9 @@ class ContactsSerializer(serializers.ModelSerializer):
         contacts_list = []
         for contact in instance.contacts.all():
             group_users = list(contact.group_users.all().values('id','mobile'))
-            msg_list = list(Messages.objects.filter(group_name=contact.id).values())
-            contacts_list.append({'id': contact.id, 'group_name': str(contact.group_name),"group_users":group_users,'messages':msg_list})
+            msg_list = MessagesSerializer(Messages.objects.filter(group_name=contact.id),many=True).data
+            print(msg_list)
+            contacts_list.append({'id': contact.id, 'group_name': str(contact.group_name),"group_users":group_users,'messages':msg_list,'last_message_time':contact.last_message_time})
         representation['contacts'] = contacts_list
 
         return representation
