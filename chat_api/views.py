@@ -20,22 +20,15 @@ from rest_framework.authtoken.models import Token
 from .models import *
 from .serializers import *
 
+"""
+    Views for the URLS
 
-# Create your views here.
+"""
 
-#@method_decorator(ensure_csrf_cookie, name='dispatch')
-class IsAuthenticatedView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = (TokenAuthentication,SessionAuthentication)
-
-    def get(self, request):
-        user = ChatUser.objects.get(mobile=request.user)
-        if user.is_authenticated:
-            return Response({"authenticated":user.is_authenticated,'mobile':user.mobile,'name':user.name})
-        else:
-            return Response({'authenticated':'False','mobile':'None','name':'Anonymous'})
-    
 class ChatUserCreationView(APIView):
+    """
+        Create a User, only POST method allowed
+    """
     serializer_class = ChatUserCreationSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -43,16 +36,18 @@ class ChatUserCreationView(APIView):
     def post(self, request, format=None):
         serializer = ChatUserCreationSerializer(data=request.data)
         if serializer.is_valid():
-            #serializer.validated_data["password"] = make_password(serializer.validated_data["password"]) # serializer create and update not hasing passwords
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class ChatUserLoginView(APIView): # Write custom authentication or use the Token/Session authentication
+class ChatUserLoginView(APIView):
 
+    """
+        Logging in using API
+        Generates a Token for Token Based authentication
+    """
     serializer_class = ChatUserLoginSerializer
     permission_classes =  [permissions.AllowAny]
-    #authentication_classes = (SessionAuthentication,)
 
     def post(self, request, format=None):
         user = authenticate(mobile=request.data["mobile"],password=(request.data["password"]))
@@ -64,6 +59,10 @@ class ChatUserLoginView(APIView): # Write custom authentication or use the Token
         return Response(status=status.HTTP_400_BAD_REQUEST) 
 
 class LogoutView(APIView):
+
+    """
+        Logs Out user 
+    """
 
     serializer_classes = None
     def get(self, request):

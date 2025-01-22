@@ -29,6 +29,14 @@ function Chat(){
     
     useEffect(() => {
 
+        /*
+            Websocket is instantiated inside the useEffect Hook for the following reasons:
+            1) Create the websocket only once and prevent it from being disconnected due to repeated reloads as state changes[the dependency array is kept empty]
+            2) Use a useRef hook to hook the websocket instance and pass it down as props whenever you need to 
+               send message using websockets.
+            3)
+        */
+
         const socket = new WebSocket(
             'ws://'
             + window.location.host
@@ -41,21 +49,29 @@ function Chat(){
         socket.onclose = () => setIsReady(false)
         socket.onmessage = function(event){
             const Event = JSON.parse(event.data)
+            /*
+                The event has attribute type and data 
+                {
+                    type: 'Eventtype',
+                    data: 'Event data',
+                }
+                The type attributes helps in identifying the approriate event to fire using the switch case statement
+             */
             switch(Event.type){
-                case 'CHAT_LOADED':
+                case 'CHAT_LOADED': // Event type on initial return of the data after the connection is acccepted
                     chatDispatch({type:"CHAT_LOADING_SUCCESS",payload:Event.data.contacts})
                     userContactsDispatch({type:'USERCONTACTS_LOADING_SUCCESS',payload:Event.data.user_contacts})
                     break;
-                case 'CONTACTS_ADDED':
+                case 'CONTACTS_ADDED': // Event type after the contacts is added successfully
                     alert('Contacts added successfully')
                     console.log(Event.data)
                     chatDispatch({type:"ADD_CONTACT_TO_CHAT_STATE", payload: Event.data.to_chat_state})
                     userContactsDispatch({type: 'USERCONTACTS_ADDED', payload: Event.data.user_contacts})
                     break;
-                case 'FAILED_ADDING_CONTACTS':
+                case 'FAILED_ADDING_CONTACTS': // Event type returned if failed to add contacts
                     alert('Failed Adding Contact')
                     break
-                case 'MESSAGE_RECEIVED':
+                case 'MESSAGE_RECEIVED': // Event type returned after the message is received
                     console.log("Message Delivered",Event.data)
                     chatDispatch({type:'UPDATE_GROUP_MESSAGE_ON_RECEIVE', payload: Event.data})
                 default:
@@ -106,7 +122,7 @@ function Chat(){
 
     return (
         <>
-            {chatState.mobile?(<AuthenticatedChatRoom ref={ws}/>):(<p>404 Not Found</p>)}
+            {chatState.mobile?(<AuthenticatedChatRoom ref={ws}/>):(<p>Loading</p>)}
         </>
     )
 

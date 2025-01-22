@@ -32,8 +32,6 @@ function ShowContacts({ws,showContacts,setShowContacts}){
 
     function AddContact(){
 
-        // If the state is mentioned outside the AddContact Component it caused the entire ShowContact component to re-render
-        // But we only want Add Contact to re-render therefore we place it here.
         const [contact, setContact] = useState({
             name : '',
             mobile : '',
@@ -45,7 +43,6 @@ function ShowContacts({ws,showContacts,setShowContacts}){
         }
 
         async function handleAddContactSubmit(){
-            // Sending add-contact through http wont be immediately reflected
 
             const msg = {
                 type:'chat.add_contact',

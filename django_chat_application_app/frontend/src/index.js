@@ -5,9 +5,6 @@ import { RouterProvider } from 'react-router';
 
 
 import App from './App';
-import Login from './components/Login';
-import Register from './components/Register';
-import Chat from './components/Chat';
 
 
 import GlobalProvider from './store';

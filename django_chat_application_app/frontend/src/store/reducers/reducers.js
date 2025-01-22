@@ -49,7 +49,6 @@ export function chatReducer(state, action){
       }
 
     case 'CHAT_LOADING_SUCCESS':
-      console.log("From reducer chat loaded successfully")
       return {
         ...state,
         id: action.payload.id,
@@ -68,7 +67,6 @@ export function chatReducer(state, action){
       top.messages.push(action.payload)
       top.last_message_time = action.payload.timestamp
 
-      console.log("New array from reducer : ", [top, ...filteredOut])
       return {
         ...state,
         contacts:[top, ...filteredOut],

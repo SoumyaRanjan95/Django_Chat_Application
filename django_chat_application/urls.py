@@ -23,11 +23,11 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/',include('chat_api.urls')),
-    path('',include('django_chat_application_app.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('admin/', admin.site.urls), # URL for accessing Admin Panel
+    path('api-auth/', include('rest_framework.urls')), # URL providing the already available URLs with the Django rest framework
+    path('api/',include('chat_api.urls')), # API level URLS
+    path('',include('django_chat_application_app.urls')), # URL for the application (homepage, etc.,)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) # Static URLS
 
 if settings.DEBUG:
     urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

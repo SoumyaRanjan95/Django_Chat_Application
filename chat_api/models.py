@@ -11,18 +11,27 @@ from rest_framework.authtoken.models import Token
 
 from .manager import *
 
+# Automatically create Tokens on new user, read Django Signals for more information
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
 
 # Create your models here.
+"""
+    ChatUser models uses the Django's AbstractUser Class to retain features of the User model while adding new fields
+    For a completely customized User Model use the AbstractBaseUser Class, see docs for more inforamtion
+
+    For customized user model, you need to provide your own user Manager Class to create user and superuser
+    and specify the UserCreation Form and UserChangeForm in forms.py to register them to the admin interface
+    
+"""
 class ChatUser(AbstractUser):
-    username = None
+    username = None # Nullify the default username field
     mobile = models.CharField(max_length=15, unique=True)
     name = models.CharField(max_length=90, default='Anonymous')
-    USERNAME_FIELD = 'mobile'
-    objects = ChatUserManager()
+    USERNAME_FIELD = 'mobile' # use the mobile field as the default username field
+    objects = ChatUserManager() # to handle the attributes defined in the manager class
 
 class ChatGroups(models.Model):
     group_name = models.UUIDField(unique=True,auto_created=True,editable=False, default=uuid.uuid4)
@@ -46,9 +55,9 @@ class Messages(models.Model):
     group_name = models.ForeignKey(ChatGroups, on_delete=models.CASCADE, related_name='receiver_sender_group')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    #delivered = models.BooleanField(default=False)
-    #seen = models.BooleanField(default=False)
 
+
+# Automatically create a contact object on ChatUser object creation
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_contacts(sender, instance=None, created=False, **kwargs):
     if created:

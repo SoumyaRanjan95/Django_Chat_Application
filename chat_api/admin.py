@@ -5,6 +5,13 @@ from django.contrib.auth.admin import UserAdmin
 from .forms import *
 from .models import *
 
+"""
+    User Admin class is used to customize the Admin Panel for the particular Django model
+    add the customized admin class along with the Django Model
+    e.g.,
+    admin.site.register(Model, ModelAdmin)
+"""
+
 class ChatUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm

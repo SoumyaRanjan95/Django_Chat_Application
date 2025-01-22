@@ -20,17 +20,19 @@ function MessageBox({showContacts,setShowContacts}){
     const [showDropDown,setShowDropDown] = useState(false);
 
     useEffect(() => {
+
+        // Close the dropdown if there is a click event outside the dropdown component
         const closeDropDown = (e) =>{
             const contgt1 = dropdownRef.current.contains(e.target) 
             if(!contgt1){
                 setShowDropDown(false)
-            }            }
+            }            
+        }
         document.body.addEventListener('click',closeDropDown);
 
         return () => document.body.removeEventListener('click',closeDropDown)
     },[])
 
-    console.log(chatState)
     function handleShowContacts(){
         setShowContacts(!showContacts)
     }

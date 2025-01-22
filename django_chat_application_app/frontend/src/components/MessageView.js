@@ -39,8 +39,9 @@ function MessageView({ws}){
                 let to = msgViewState.viewContents.group_users.filter((elem) =>  elem['mobile'] != chatState.mobile)[0]['mobile']
                 let group_name = msgViewState.viewContents.group_name
     
+                // Defined the type of the 
                 const msg = {
-                    type:'chat.message',
+                    type:'chat.message', // Defined the type of the data to send to the websocket consumer
                     group_name: msgViewState.viewContents.group_name,
                     data: {
                         to: to,
